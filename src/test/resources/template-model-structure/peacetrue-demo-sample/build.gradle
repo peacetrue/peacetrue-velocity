@@ -1,0 +1,22 @@
+plugins {
+    id "org.springframework.boot" version "1.5.20.RELEASE"
+}
+
+description '模板样章'
+
+dependencies {
+    compile 'ch.qos.logback:logback-classic'
+    compile 'com.github.peacetrue:peacetrue-spring'
+    compile project(":peacetrue-demo-controller")
+    compile project(":peacetrue-demo-type")
+    compile project(":peacetrue-demo-service-mybatis")
+    compile project(path: ':peacetrue-demo-service-mybatis', configuration: 'testArtifacts')
+    compile 'com.github.peacetrue:peacetrue-result-web'
+    compile 'com.github.peacetrue:peacetrue-result-exception-support'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'com.github.peacetrue.module:peacetrue-module-controller'
+    implementation 'com.github.peacetrue.module:peacetrue-module-service-mybatis:1.0-SNAPSHOT'
+
+
+}

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="10 seconds" debug="true">
+
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <pattern>%date [%thread] %-5level %logger{36}.%M - %msg%n</pattern>
+        </layout>
+    </appender>
+
+    <!-- 控制日志级别 -->
+    <root level="trace">
+        <appender-ref ref="stdout"/>
+    </root>
+</configuration>

@@ -1,0 +1,111 @@
+package ${basePackageName}.service;
+
+import com.github.pagehelper.PageHelper;
+import com.github.peacetrue.core.Range;
+import com.github.peacetrue.mybatis.dynamic.MybatisDynamicUtils;
+import com.github.peacetrue.pagehelper.PageHelperUtils;
+import com.github.peacetrue.spring.util.BeanUtils;
+import com.github.peacetrue.util.EntityNotFoundException;
+import org.mybatis.dynamic.sql.SqlBuilder;
+import org.mybatis.dynamic.sql.SqlColumn;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+
+import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static ${basePackageName}.service.${name}DynamicSqlSupport.*;
+
+/**
+ * @author xiayx
+ */
+public class ${name}ServiceImpl implements ${name}Service {
+
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    @Autowired
+    private ${name}Mapper ${UpperCamel.toLowerCamel(${name})}Mapper;
+
+    @Override
+    public  ${name}VO add(${name}Add params) {
+        logger.info("新增信息[{}]", params);
+        ${name} ${UpperCamel.toLowerCamel(${name})} = new ${name}<>();
+        BeanUtils.copyProperties(params, ${UpperCamel.toLowerCamel(${name})});
+        ${UpperCamel.toLowerCamel(${name})}.setCreatorId(params.getOperatorId());
+        ${UpperCamel.toLowerCamel(${name})}.setCreatedTime(new Date());
+        ${UpperCamel.toLowerCamel(${name})}.setModifierId(params.getOperatorId());
+        ${UpperCamel.toLowerCamel(${name})}.setModifiedTime(${UpperCamel.toLowerCamel(${name})}.getCreatedTime());
+        logger.debug("保存信息[{}]", ${UpperCamel.toLowerCamel(${name})});
+        int count = ${UpperCamel.toLowerCamel(${name})}Mapper.insertSelective(${UpperCamel.toLowerCamel(${name})});
+        logger.debug("共影响[{}]条记录", count);
+        return to(${UpperCamel.toLowerCamel(${name})});
+    }
+
+    private  ${name}VO to(${name} ${UpperCamel.toLowerCamel(${name})}) {
+        ${name}VO vo = new ${name}VO<>();
+        BeanUtils.copyProperties(${UpperCamel.toLowerCamel(${name})}, vo);
+        return vo;
+    }
+
+    @Override
+    public  Page<${name}VO> query(@Nullable ${name}Query params, @Nullable Pageable pageable) {
+        logger.info("分页查询信息[{}]", params);
+        if (params == null) params = ${name}Query.DEFAULT;
+        if (params.getCreatedTime() == null) params.setCreatedTime(new Range.Date());
+        if (pageable == null) pageable = new PageRequest(0, 10, new Sort(Sort.Direction.DESC, "createdTime"));
+        PageHelper.startPage(pageable.getPageNumber() + 1, pageable.getPageSize());
+        List<${name}> entities = ${UpperCamel.toLowerCamel(${name})}Mapper.selectByExample()
+                .where()
+                .and(code, SqlBuilder.isLikeWhenPresent(MybatisDynamicUtils.likeValue(params.getCode())))
+                .and(name, SqlBuilder.isEqualToWhenPresent(params.getName()))
+                .and(createdTime, SqlBuilder.isGreaterThanOrEqualToWhenPresent(params.getCreatedTime().getLowerBound()))
+                .and(createdTime, SqlBuilder.isLessThanWhenPresent(MybatisDynamicUtils.endDateValue(params.getCreatedTime().getUpperBound())))
+                .orderBy(MybatisDynamicUtils.orders(${UpperCamel.toLowerCamel(${name})}, pageable.getSort()))
+                .build().execute();
+        logger.debug("共取得'{}'条记录", entities.size());
+        if (entities.isEmpty()) return new PageImpl<>(Collections.emptyList());
+
+        List<${name}VO> vos = entities.stream().map(this::to).collect(Collectors.toList());
+        return new PageImpl<>(vos, pageable, PageHelperUtils.getTotal(entities));
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public  ${name}VO get(${name}Get params) {
+        logger.info("获取符合条件[{}]的信息", params);
+        return ${UpperCamel.toLowerCamel(${name})}Mapper.selectByExample()
+                .where(id, SqlBuilder.isEqualTo(params.getId()))
+                .build().execute().stream()
+                .reduce((l, r) -> r)
+                .map(this::to)
+                .orElseThrow(() -> new EntityNotFoundException(${name}.class, "id", params.getId()));
+    }
+
+    @Override
+    public  int modify(${name}Modify params) {
+        logger.info("修改信息[{}]", params);
+        ${name} ${UpperCamel.toLowerCamel(${name})} = new ${name}<>();
+        BeanUtils.copyProperties(params, ${UpperCamel.toLowerCamel(${name})});
+        ${UpperCamel.toLowerCamel(${name})}.setModifierId(params.getOperatorId());
+        ${UpperCamel.toLowerCamel(${name})}.setModifiedTime(new Date());
+        int count = ${UpperCamel.toLowerCamel(${name})}Mapper.updateByPrimaryKeySelective(${UpperCamel.toLowerCamel(${name})});
+        logger.debug("共影响[{}]条记录", count);
+        return count;
+    }
+
+    @Override
+    public  int delete(${name}Delete params) {
+        logger.info("删除信息[{}]", params);
+        int count = params.getId().length == 1
+                ? ${UpperCamel.toLowerCamel(${name})}Mapper.deleteByPrimaryKey(params.getId()[0])
+                : ${UpperCamel.toLowerCamel(${name})}Mapper.deleteInPrimaryKey(Arrays.asList(params.getId()));
+        logger.debug("共影响[{}]条记录", count);
+        return count;
+    }
+}

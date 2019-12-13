@@ -1,0 +1,92 @@
+## 列出属性需要导入的类
+#macro( listImport $properties)
+    #foreach($property in $properties)
+        #if(!$property.type.name.startsWith("java.lang"))
+        import $property.type.name;
+        #end
+    #end
+#end
+
+## 列出属性
+#macro( listProperties $properties $ignored)
+    #foreach($property in $properties)
+        #if(!$ignored || !$ignored.contains($property.name))
+        /** $property.comment */
+        private $property.type.simpleName $property.name;
+        #end
+    #end
+#end
+
+## 设置操作者主键类型
+#macro( setOperatorIdType $properties)
+    #foreach($property in $properties)
+        #if($property.name == 'creatorId')
+            #set($operatorIdType = $property.type.simpleName)
+        #end
+    #end
+#end
+
+## 设置操作者主键类型
+#macro( setId $properties)
+    #foreach($property in $properties)
+        #if($property.name == 'id')
+            #set($id = $property)
+        #end
+    #end
+#end
+
+#setId($properties)
+
+## 排除主键
+#macro( listPropertiesOutId $properties)
+    #listProperties($properties,["id"])
+#end
+
+## 排除审计信息（创建者、创建时间、修改者、修改时间）
+#macro( listPropertiesOutAudit $properties)
+    #listProperties($properties,["creatorId","createdTime","createdTime","createdTime"])
+#end
+
+## 排除主键
+#macro( listPropertiesOutIdAudit $properties)
+    #listProperties($properties,["id","creatorId","createdTime","createdTime","createdTime"])
+#end
+
+## 列出属性，并转换日期为范围
+#macro( listPropertiesDate $properties)
+    #foreach($property in $properties)
+    /** $property.comment */
+        #if($property.type.name=="java.util.Date")
+        private Range.Date $property.name;
+        #else
+        private $property.type.simpleName $property.name;
+        #end
+    #end
+#end
+
+## 列出 SqlColumn
+#macro( listSqlColumns $properties)
+    #foreach($property in $properties)
+    public final SqlColumn<$property.type.simpleName> $property.name = column("$property.name", $javaTypeToSqlType[$property.type.name]);
+    #end
+#end
+
+## 列出 SqlColumn
+#macro( listStaticSqlColumns $name $properties)
+    #foreach($property in $properties)
+    public static final SqlColumn<$property.type.simpleName> $property.name = $UpperCamel.toLowerCamel(${name}).$property.name;
+    #end
+#end
+
+## 列出 SqlColumn
+#macro( listResultColumns $properties)
+    #foreach($property in $properties)
+        #if($property.name=='id')
+        @Result(column = "$UpperCamel.toLowerUnderscore($property.name)", property = "$property.name", jdbcType = $javaTypeToSqlType[$property.type.name], id = true),
+        #else
+        @Result(column = "$UpperCamel.toLowerUnderscore($property.name)", property = "$property.name", jdbcType = $javaTypeToSqlType[$property.type.name]),
+        #end
+    #end
+#end
+
+

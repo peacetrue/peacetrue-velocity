@@ -1,0 +1,180 @@
+package ${basePackageName}.service;
+
+import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.type.JdbcType;
+import org.mybatis.dynamic.sql.SqlBuilder;
+import org.mybatis.dynamic.sql.SqlColumn;
+import org.mybatis.dynamic.sql.delete.DeleteDSL;
+import org.mybatis.dynamic.sql.delete.MyBatis3DeleteModelAdapter;
+import org.mybatis.dynamic.sql.delete.render.DeleteStatementProvider;
+import org.mybatis.dynamic.sql.insert.render.InsertStatementProvider;
+import org.mybatis.dynamic.sql.render.RenderingStrategy;
+import org.mybatis.dynamic.sql.select.MyBatis3SelectModelAdapter;
+import org.mybatis.dynamic.sql.select.QueryExpressionDSL;
+import org.mybatis.dynamic.sql.select.SelectDSL;
+import org.mybatis.dynamic.sql.select.render.SelectStatementProvider;
+import org.mybatis.dynamic.sql.update.MyBatis3UpdateModelAdapter;
+import org.mybatis.dynamic.sql.update.UpdateDSL;
+import org.mybatis.dynamic.sql.update.render.UpdateStatementProvider;
+import org.mybatis.dynamic.sql.util.SqlProviderAdapter;
+
+import javax.annotation.Generated;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
+import static ${basePackageName}.service.${name}DynamicSqlSupport.*;
+import static org.mybatis.dynamic.sql.SqlBuilder.isEqualTo;
+import static org.mybatis.dynamic.sql.SqlBuilder.isIn;
+#setId($properties)
+
+@Mapper
+public interface ${name}Mapper {
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    long count(SelectStatementProvider selectStatement);
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    @DeleteProvider(type = SqlProviderAdapter.class, method = "delete")
+    int delete(DeleteStatementProvider deleteStatement);
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    @InsertProvider(type = SqlProviderAdapter.class, method = "insert")
+    @Options(useGeneratedKeys = true, keyProperty = "record.id")
+    int insert(InsertStatementProvider<${name}> insertStatement);
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @ResultMap("${name}Result")
+     ${name} selectOne(SelectStatementProvider selectStatement);
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    @SelectProvider(type = SqlProviderAdapter.class, method = "select")
+    @Results(id = "${name}Result", value = {
+            #listResultColumns($properties)
+    })
+     List<${name}> selectMany(SelectStatementProvider selectStatement);
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    @UpdateProvider(type = SqlProviderAdapter.class, method = "update")
+    int update(UpdateStatementProvider updateStatement);
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default QueryExpressionDSL<MyBatis3SelectModelAdapter<Long>> countByExample() {
+        return SelectDSL.selectWithMapper(this::count, SqlBuilder.count())
+                .from($UpperCamel.toLowerCamel(${name}));
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default DeleteDSL<MyBatis3DeleteModelAdapter<Integer>> deleteByExample() {
+        return DeleteDSL.deleteFromWithMapper(this::delete, $UpperCamel.toLowerCamel(${name}));
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int deleteByPrimaryKey($id.type.simpleName id_) {
+        return DeleteDSL.deleteFromWithMapper(this::delete, $UpperCamel.toLowerCamel(${name}))
+                .where(id, isEqualTo(id_))
+                .build()
+                .execute();
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int deleteInPrimaryKey(Collection<$id.type.simpleName> id_) {
+        return DeleteDSL.deleteFromWithMapper(this::delete, $UpperCamel.toLowerCamel(${name}))
+                .where(id, isIn(id_ instanceof List ? (List<$id.type.simpleName>) id_ : new LinkedList<$id.type.simpleName>(id_)))
+                .build()
+                .execute();
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int insert(${name} record) {
+        return insert(SqlBuilder.insert(record)
+                .into($UpperCamel.toLowerCamel(${name}))
+                #foreach($property in $properties)
+                .map($property.name).toProperty("$property.name")
+                #end
+                .build()
+                .render(RenderingStrategy.MYBATIS3));
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int insertSelective(${name} record) {
+        return insert(SqlBuilder.insert(record)
+                .into($UpperCamel.toLowerCamel(${name}))
+                #foreach($property in $properties)
+                .map($property.name).toPropertyWhenPresent("$property.name", record::get$LowerCamel.toUpperCamel(${property.name}))
+                #end
+                .build()
+                .render(RenderingStrategy.MYBATIS3));
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default  QueryExpressionDSL<MyBatis3SelectModelAdapter<List<${name}>>> selectByExample() {
+        return SelectDSL.selectWithMapper(this::selectMany, ${UpperCamel.toLowerCamel(${name})}.column("*"))
+                .from($UpperCamel.toLowerCamel(${name}));
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default  QueryExpressionDSL<MyBatis3SelectModelAdapter<List<${name}>>> selectDistinctByExample() {
+        return SelectDSL.selectDistinctWithMapper(this::selectMany, ${UpperCamel.toLowerCamel(${name})}.column("*"))
+                .from($UpperCamel.toLowerCamel(${name}));
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default ${name} selectByPrimaryKey(Object id_) {
+        return SelectDSL.selectWithMapper(this::selectOne, ${UpperCamel.toLowerCamel(${name})}.column("*"))
+                .from($UpperCamel.toLowerCamel(${name}))
+                .where(id, isEqualTo(id_))
+                .build()
+                .execute();
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default UpdateDSL<MyBatis3UpdateModelAdapter<Integer>> updateByExample(${name} record) {
+        return UpdateDSL.updateWithMapper(this::update, $UpperCamel.toLowerCamel(${name}))
+                #foreach($property in $properties)
+                .set($property.name).equalTo(record::get$LowerCamel.toUpperCamel(${property.name}))
+                #end
+                ;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default UpdateDSL<MyBatis3UpdateModelAdapter<Integer>> updateByExampleSelective(${name} record) {
+        return UpdateDSL.updateWithMapper(this::update, $UpperCamel.toLowerCamel(${name}))
+                #foreach($property in $properties)
+                .set($property.name).equalToWhenPresent(record::get$LowerCamel.toUpperCamel(${property.name}))
+                #end
+                ;
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int updateByPrimaryKey(${name} record) {
+        return UpdateDSL.updateWithMapper(this::update, $UpperCamel.toLowerCamel(${name}))
+                #foreach($property in $properties)
+                .set($property.name).equalTo(record::get$LowerCamel.toUpperCamel(${property.name}))
+                #end
+                .where(id, isEqualTo(record::getId))
+                .build()
+                .execute();
+    }
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    default int updateByPrimaryKeySelective(${name} record) {
+        return UpdateDSL.updateWithMapper(this::update, $UpperCamel.toLowerCamel(${name}))
+                #foreach($property in $properties)
+                .set($property.name).equalToWhenPresent(record::get$LowerCamel.toUpperCamel(${property.name}))
+                #end
+                .where(id, isEqualTo(record::getId))
+                .build()
+                .execute();
+    }
+
+
+    //append
+    @SuppressWarnings("unchecked")
+    default  List<${name}> selectById(Collection<$id.type.simpleName> ids) {
+        return this.selectByExample().where(${UpperCamel.toLowerCamel(${name})}.id, SqlBuilder.isIn(new ArrayList<>(ids))).build().execute();
+    }
+
+}

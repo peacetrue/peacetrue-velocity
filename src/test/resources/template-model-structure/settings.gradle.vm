@@ -1,0 +1,6 @@
+rootProject.name = "${projectName}"
+include "${projectName}-service-api"
+include "${projectName}-service-mybatis"
+include "${projectName}-controller"
+include "${projectName}-type"
+include "${projectName}-sample"

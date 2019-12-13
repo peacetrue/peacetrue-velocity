@@ -137,6 +137,17 @@ allprojects { project ->
 
 }
 
+dependencies {
+    compile 'org.apache.velocity:velocity-engine-core:2.1'
+    implementation "org.springframework.boot:spring-boot-autoconfigure"
+    implementation "com.google.guava:guava"
+    compileOnly "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+
+    testCompile 'junit:junit'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'org.springframework.boot:spring-boot-starter-logging'
+}
 
 
 

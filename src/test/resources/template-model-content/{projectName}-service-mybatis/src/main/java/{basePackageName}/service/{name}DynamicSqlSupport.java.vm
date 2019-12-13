@@ -1,0 +1,28 @@
+package ${basePackageName}.service;
+
+import org.mybatis.dynamic.sql.SqlColumn;
+import org.mybatis.dynamic.sql.SqlTable;
+
+import javax.annotation.Generated;
+import java.sql.JDBCType;
+import java.util.Date;
+
+public final class ${name}DynamicSqlSupport {
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final ${name} ${UpperCamel.toLowerCamel(${name})} = new ${name}();
+
+    #foreach($property in $properties)
+        public static final SqlColumn<$property.type.simpleName> $property.name = $UpperCamel.toLowerCamel(${name}).$property.name;
+    #end
+
+    @Generated("org.mybatis.generator.api.MyBatisGenerator")
+    public static final class ${name} extends SqlTable {
+        #foreach($property in $properties)
+            public final SqlColumn<$property.type.simpleName> $property.name = column("$property.name", $javaTypeToSqlType[$property.type.name]);
+        #end
+
+        public ${name}() {
+            super("$UpperCamel.toLowerUnderscore(${name})");
+        }
+    }
+}

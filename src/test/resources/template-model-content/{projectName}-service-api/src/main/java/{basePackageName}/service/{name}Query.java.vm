@@ -1,0 +1,26 @@
+package ${basePackageName}.service;
+
+import com.github.peacetrue.core.Range;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
+
+#listImport($properties)
+#setOperatorIdType($properties)
+
+/**
+ * @author xiayx
+ */
+@Data
+@NoArgsConstructor
+public class ${name}Query extends OperatorCapableImpl<$operatorIdType> {
+
+    public static final ${name}Query DEFAULT = new ${name}Query();
+
+    private static final long serialVersionUID = 0L;
+
+    #listPropertiesDate($properties)
+
+
+}
